@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css" />
+    <title>Activities Manager</title>
+  
+</head>
+<body>
+
+
+    <header class="header">
+        <h1 class="big-title">Activities Manager</h1>
+    </header>
+
+   
+ 
+    <section class="rightsidesection">
+        <button onclick="toggleView('calendar')">Calendar</button>
+        <button onclick="toggleView('taskInput')">Activity</button>
+        <button onclick="toggleView('Information')">Information</button>
+    </section>
+    <main class="main">
+        <select id="categorySelect">
+            <option value="leisure">Leisure</option>
+            <option value="work">Work</option>
+            <option value="Fitness">Fitness</option>
+        </select>
+        <input type="date" id="deadlineInput">
+        <button onclick="AddButton()">Add Activities</button>
+        <br />
+        <div id="taskInput" class="task-input-box">
+            <input type="text" id="taskInputField" placeholder="Add a task...">
+        </div>
+        <div id='calendar' style="display: none;"></div>
+        <div id="Information" style="display: none;">
+            <p>Add Pop-up Window for activity info</p>
+        </div>
+        <ul id="taskList"></ul>
+    </main>
+
+    <script>
+        var calendarInitialized = false;
+
+        function AddButton() {
+            const inputField = document.getElementById("taskInputField");
+            const text = inputField.value.trim();
+
+            if (text !== "") {
+                const categorySelect = document.getElementById("categorySelect");
+                const selectedCategory = categorySelect.options[categorySelect.selectedIndex].value;
+
+                const deadlineInput = document.getElementById("deadlineInput");
+                const dueDate = deadlineInput.value;
+
+                const list = document.getElementById("taskList");
+                const newItem = document.createElement("li");
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.addEventListener("change", function () {
+                    newItem.classList.toggle("completed", this.checked);
+                });
+
+                newItem.appendChild(checkbox);
+                newItem.innerHTML += `${text} (${selectedCategory}) - Due: ${dueDate}`;
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.addEventListener("click", function () {
+                    list.removeChild(newItem);
+                });
+                newItem.appendChild(deleteButton);
+
+                list.appendChild(newItem);
+                inputField.value = "";
+            }
+        }
+
+        function toggleView(section) {
+            const taskInputSection = document.getElementById("taskInput");
+            const calendarSection = document.getElementById("calendar");
+            const InformationSection = document.getElementById("Information");
+
+            if (section === 'taskInput') {
+                taskInputSection.style.display = "block";
+                calendarSection.style.display = "none";
+                InformationSection.style.display = "none";
+
+            } else if (section === 'calendar') {
+                taskInputSection.style.display = "none";
+                calendarSection.style.display = "block";
+                InformationSection.style.display = "none";
+                FullCalendar()
+
+            } else if (section === 'Information') {
+                taskInputSection.style.display = "none";
+                calendarSection.style.display = "none";
+                InformationSection.style.display = "block";
+
+
+            }
+        }
+
+        function FullCalendar() {
+
+        }
+
+
+
+
+
+    </script>
+</body>
+</html>
