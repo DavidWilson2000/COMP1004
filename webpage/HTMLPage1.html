@@ -1,115 +1,535 @@
 ﻿<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="stylesheet.css" />
     <title>Activities Manager</title>
-  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.5/main.min.js"></script>
+    <style>
+        body {
+            background-image: url("mainbackground.png");
+            background-size: cover;
+            color: white;
+            background-color: #1D76C1;
+            padding: 0;
+            margin: 0;
+            font-family: Arial, sans-serif; /* Change font if needed */
+        }
+
+        .big-title {
+            font-size: 36px;
+            color: black;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .header {
+            height: 100px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .rightsidesection {
+          
+
+        
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            right: 0;
+            padding: 20px;
+            display: flex; /* Add flex display */
+            align-items: center; /* Center items vertically */
+        }
+
+        .rightsidesection button,
+        .rightsidesection input[type="file"] {
+            margin-right: 10px; /* Add margin between buttons */
+        }
+        .image-text-container {
+            clear: both;
+            color: black;
+        }
+
+            .image-text-container img {
+                float: left;
+                margin-right: 10px; /* Adjust this value to create space between image and text */
+                width: 700px; /* Adjust this value to set the desired width */
+                height: 500px; /* Adjust this value to set the desired height */
+            }
+
+    </style>
+    <style>
+
+        #calendar-container {
+            display: none; /* Change display property to block to make it initially visible */
+            margin: auto;
+            font-family: Lora, serif;
+            width: 740px; /* Fixed width */
+            height: 800px; /* Fixed height */
+            border: 1px solid #ccc;
+            background-color: black;
+            position: relative; /* Ensure legend is positioned relative to calendar container */
+        }
+
+        .fc-button-group {
+            display: block;
+            justify-content: center;
+            margin-top: 10px; /* Adjust margin as needed */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .fc-toolbar {
+            text-align: center; /* Center align the buttons */
+        }
+
+        .fc-button {
+            margin: 5px; /* Adjust margin between buttons as needed */
+            display: inline-block; /* Ensure buttons are displayed inline */
+        }
+
+        .fc-toolbar-title {
+            text-align: center; /* Center text horizontally */
+        }
+
+        .fc-col-header {
+            width: 700px !important;
+        }
+
+        .fc-day-header {
+            text-align: center; /* Center text horizontally */
+            background-color: black;
+        }
+
+        table.fc-scrollgrid {
+            border-collapse: collapse; /* Ensure borders are collapsed */
+        }
+
+            table.fc-scrollgrid th,
+            table.fc-scrollgrid td {
+                padding: 10px; /* Add padding to table cells */
+                border: none; /* Remove borders from table cells */
+            }
+
+        #calendar-container .fc-daygrid-day {
+            min-width: 100px; /* Adjust the width of each day box */
+            max-width: 100px;
+            background-color: white;
+            color: black;
+            height: 100px; /* Adjust the height of each day box */
+            border: 1px solid #000000; /* Add border to each day box */
+            box-sizing: border-box; /* Ensure border is included in width and height calculations */
+        }
+
+        /* Customize the calendar appearance */
+        .fc-daygrid-event {
+            color: black; /* Text color for events */
+            font-size: 12px; /* Adjust font size */
+        }
+
+            /* Define background colors for different categories */
+            .fc-daygrid-event.Work {
+                color: #FF5733 !important; /* Work category */
+            }
+
+            .fc-daygrid-event.Leisure {
+                color: #33FF5E !important; /* Leisure category */
+            }
+
+            .fc-daygrid-event.Fitness {
+                color: #3380FF !important; /* Fitness category */
+            }
+
+        /* Smaller font size for time */
+        .fc-event-time {
+            display: none;
+        }
+
+        /* Legend styles */
+        #legend {
+            position: fixed;
+            top: 50%;
+            left: 10px; /* Adjust the left position as needed */
+            transform: translateY(-50%);
+            text-align: center;
+            background-color: black;
+            padding: 10px;
+            border-radius: 5px;
+            color: white; /* Set text color */
+            z-index: 2;
+        }
+
+        .legend-item {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .legend-color.legend-Work {
+            background-color: #FF5733;
+        }
+
+        .legend-color.legend-Leisure {
+            background-color: #33FF5E;
+        }
+
+        .legend-color.legend-Fitness {
+            background-color: #3380FF;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
-
-
     <header class="header">
         <h1 class="big-title">Activities Manager</h1>
     </header>
 
-   
- 
     <section class="rightsidesection">
         <button onclick="toggleView('calendar')">Calendar</button>
         <button onclick="toggleView('taskInput')">Activity</button>
         <button onclick="toggleView('Information')">Information</button>
+        <button id="saveButton">Save Tasks</button> <!-- Added saveButton -->
+        <input type="file" id="loadFileInput" accept=".json">
+
     </section>
     <main class="main">
-        <select id="categorySelect">
-            <option value="leisure">Leisure</option>
-            <option value="work">Work</option>
-            <option value="Fitness">Fitness</option>
-        </select>
-        <input type="date" id="deadlineInput">
-        <button onclick="AddButton()">Add Activities</button>
-        <br />
-        <div id="taskInput" class="task-input-box">
-            <input type="text" id="taskInputField" placeholder="Add a task...">
+        <div id="activitySection" style="display: none;">
+            <select id="categorySelect">
+                <option value="Leisure">Leisure</option>
+                <option value="Work">Work</option>
+                <option value="Fitness">Fitness</option>
+            </select>
+            <input type="date" id="deadlineInput">
+            <input type="time" id="startTimeInput" placeholder="Start Time">
+            <button onclick="AddEvent()">Add Activities</button>
+            <br />
+            <div id="taskInput" class="task-input-box">
+                <input type="text" id="taskInputField" placeholder="Add a task...">
+            </div>
+            <input type="text" id="searchInput" oninput="searchTasks()" placeholder="Search tasks...">
+            <ul id="taskList"></ul>
         </div>
-        <div id='calendar' style="display: none;"></div>
-        <div id="Information" style="display: none;">
-            <p>Add Pop-up Window for activity info</p>
+
+        <div id="calendar-container">
+            <!-- Calendar HTML markup here -->
         </div>
-        <ul id="taskList"></ul>
+        <div id="legend">
+            <h2>Legend</h2>
+            <ul>
+                <li><span class="legend-Work legend-color"></span> Working</li>
+                <li><span class="legend-Leisure legend-color"></span> Leisure</li>
+                <li><span class="legend-Fitness legend-color"></span> Fitness</li>
+            </ul>
+        </div>
+        <div id="Information">
+            <div class="image-text-container">
+                <img id="fitnessImage" src="fitness.png" alt="Fitness Image">
+                <p>Fitness Text</p>
+            </div>
+            <div class="image-text-container">
+                <img id="workImage" src="work.png" alt="Work Image">
+                <p>Work Text</p>
+            </div>
+            <div class="image-text-container">
+                <img id="leisureImage" src="leisure.png" alt="Leisure Image">
+                <p>Leisure Text</p>
+            </div>
+        </div>
     </main>
 
     <script>
+        // Client-side JavaScript code goes here
+        // Wrap the calendar initialization code in a function
+        function initializeCalendar() {
+            var calendarEl = document.getElementById('calendar-container');
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 'auto',
+                headerToolbar: {
+                    start: 'title',
+                    center: '',
+                    end: 'customPrevYear,customPrev,customToday,customNext,customNextYear'
+                },
+                // Add other options as needed
+                select: function (info) {
+                    if (info.start && info.end) {
+                        calendar.gotoDate(info.start);
+                    }
+                }
+            });
+
+            // Custom buttons
+            calendar.setOption('customButtons', {
+                customPrev: {
+                    text: 'Next Month',
+                    click: function () {
+                        calendar.next();
+                    }
+                },
+                customNext: {
+                    text: 'Prev Year',
+                    click: function () {
+                        calendar.prevYear();
+                    }
+                },
+                customToday: {
+                    text: 'Today',
+                    click: function () {
+                        goToToday();
+                    }
+                },
+                customPrevYear: {
+                    text: 'Prev Month',
+                    click: function () {
+                        calendar.prev();
+                    }
+                },
+                customNextYear: {
+                    text: 'Next Year',
+                    click: function () {
+                        calendar.nextYear();
+                    }
+                }
+            });
+
+            calendar.render();
+            calendarInitialized = true;
+
+            renderTasks();
+        }
+
+        // Initially hide the legend
+        document.addEventListener("DOMContentLoaded", function () {
+            const legend = document.getElementById("legend");
+            legend.style.display = "none";
+        });
+
+        // Call the initializeCalendar function when the DOM content is loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeCalendar();
+        });
+
+        var tasks = []; // Array to store tasks
         var calendarInitialized = false;
+        var calendar;
 
-        function AddButton() {
-            const inputField = document.getElementById("taskInputField");
-            const text = inputField.value.trim();
+        // Function to render tasks in the activity tab
+        function renderTasks(filteredTasks) {
+            const taskList = document.getElementById("taskList");
+            taskList.innerHTML = ""; // Clear the task list before rendering
 
-            if (text !== "") {
-                const categorySelect = document.getElementById("categorySelect");
-                const selectedCategory = categorySelect.options[categorySelect.selectedIndex].value;
+            // Sort tasks by start time
+            tasks.sort((a, b) => {
+                // Sort by date and time
+                return new Date(a.date + "T" + a.startTime) - new Date(b.date + "T" + b.startTime);
+            });
 
-                const deadlineInput = document.getElementById("deadlineInput");
-                const dueDate = deadlineInput.value;
+            // Use filteredTasks if provided, otherwise use all tasks
+            const tasksToRender = filteredTasks || tasks;
 
-                const list = document.getElementById("taskList");
-                const newItem = document.createElement("li");
+            tasksToRender.forEach((task, index) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = `${task.startTime} - ${task.title} - ${task.date} (${task.category})`; // Include time, date, and category
+                listItem.innerHTML += `<button onclick="deleteTask(event)" data-index="${index}">Delete</button>`; // Add data-index attribute
+                taskList.appendChild(listItem);
+            });
 
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.addEventListener("change", function () {
-                    newItem.classList.toggle("completed", this.checked);
-                });
+            taskList.style.display = "block"; // Ensure the task list is always displayed
+        }
 
-                newItem.appendChild(checkbox);
-                newItem.innerHTML += `${text} (${selectedCategory}) - Due: ${dueDate}`;
+        function searchTasks() {
+            const searchQuery = document.getElementById("searchInput").value.toLowerCase();
+            const filteredTasks = tasks.filter(task => {
+                // Convert task title to lowercase for case-insensitive search
+                return task.title.toLowerCase().includes(searchQuery);
+            });
+            renderTasks(filteredTasks);
+        }
 
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-                deleteButton.addEventListener("click", function () {
-                    list.removeChild(newItem);
-                });
-                newItem.appendChild(deleteButton);
+        function AddTask(title, date, category, startTime, allDay) {
+            tasks.push({ title: title, date: date, category: category, startTime: startTime }); // Include allDay property
+            renderTasks(); // Re-render the task list
+        }
 
-                list.appendChild(newItem);
-                inputField.value = "";
+        function deleteTask(event) {
+            const index = event.target.dataset.index; // Get the index of the task from the data-index attribute
+            const task = tasks[index];
+            const title = `${task.startTime} - ${task.title}`; // Include start time in the title for comparison
+
+            // Remove the task from the tasks array
+            tasks.splice(index, 1);
+
+            // Re-render the task list
+            renderTasks();
+
+            // Remove the event from the calendar
+            const eventToRemove = calendar.getEvents().find(event => {
+                // Combine start time and title of the task to match with the event title
+                return event.title === title;
+            });
+
+            if (eventToRemove) {
+                eventToRemove.remove();
             }
         }
+
+        function AddEvent() {
+            const title = document.getElementById("taskInputField").value.trim();
+            const date = document.getElementById("deadlineInput").value;
+            const category = document.getElementById("categorySelect").value;
+            let startTime = document.getElementById("startTimeInput").value;
+
+            // If no start time is provided, set it to 00:00
+            if (startTime === "") {
+                startTime = "00:00";
+            }
+
+            // Combine date and startTime into a single Date object
+            const eventStart = new Date(date + "T" + startTime);
+
+            const event = {
+                title: `${startTime} - ${title}`,
+                start: eventStart,
+                allDay: false,
+                classNames: [category]
+            };
+
+            if (title !== "" && date !== "") {
+                if (!calendarInitialized) {
+                    initializeCalendar();
+                }
+                calendar.addEvent(event);
+                AddTask(title, date, category, startTime, false);
+
+                document.getElementById("taskInputField").value = "";
+                document.getElementById("startTimeInput").value = "";
+            } else {
+                alert("Please enter title, date, and start time for the event.");
+            }
+        }
+
+        // Function to move calendar to today's date
+        function goToToday() {
+            calendar.gotoDate(new Date());
+        }
+
+        var calendarVisible = false;
 
         function toggleView(section) {
             const taskInputSection = document.getElementById("taskInput");
-            const calendarSection = document.getElementById("calendar");
+            const calendarContainer = document.getElementById("calendar-container");
             const InformationSection = document.getElementById("Information");
+            const legend = document.getElementById("legend"); // Get the legend element
+            const activitySection = document.getElementById("activitySection"); // Get the activity section
+            const searchInput = document.getElementById("searchInput"); // Get the search input
 
             if (section === 'taskInput') {
                 taskInputSection.style.display = "block";
-                calendarSection.style.display = "none";
+                calendarContainer.style.display = "none";
                 InformationSection.style.display = "none";
-
+                legend.style.display = "none"; // Hide legend when switching to task input
+                activitySection.style.display = "block"; // Hide activity section when switching to task input
+                calendarVisible = false;
             } else if (section === 'calendar') {
                 taskInputSection.style.display = "none";
-                calendarSection.style.display = "block";
+                calendarContainer.style.display = "block";
                 InformationSection.style.display = "none";
-                FullCalendar()
-
+                legend.style.display = "block"; // Show legend when switching to calendar
+                activitySection.style.display = "none"; // Hide activity section when switching to calendar
+                calendarVisible = true;
             } else if (section === 'Information') {
                 taskInputSection.style.display = "none";
-                calendarSection.style.display = "none";
+                calendarContainer.style.display = "none";
                 InformationSection.style.display = "block";
-
-
+                legend.style.display = "none"; // Hide legend when switching to information
+                activitySection.style.display = "none"; // Hide activity section when switching to information
+                calendarVisible = false;
+            } else if (section === 'Activities') {
+                taskInputSection.style.display = "block";
+                calendarContainer.style.display = "none";
+                InformationSection.style.display = "none";
+                legend.style.display = "none"; // Hide legend when switching to activities
+                activitySection.style.display = "block"; // Show activity section when switching to activities
+                searchInput.value = ""; // Clear search input when switching to activities
+                calendarVisible = false;
             }
         }
 
-        function FullCalendar() {
+        // Function to save tasks to a JSON file
+        function saveTasks() {
+            const tasksJSON = JSON.stringify(tasks);
+            const blob = new Blob([tasksJSON], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tasks.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        // Function to load tasks from a JSON file
+        function loadTasksFromFile(file) {
+            const reader = new FileReader();
 
+            reader.onload = function (event) {
+                console.log("File loaded successfully.");
+                const tasksJSON = event.target.result;
+                console.log("Tasks JSON:", tasksJSON);
+
+                try {
+                    const loadedTasks = JSON.parse(tasksJSON);
+                    console.log("Tasks loaded:", loadedTasks);
+
+                    // Clear existing tasks
+                    tasks = [];
+
+                    // Add loaded tasks to the tasks array
+                    loadedTasks.forEach(task => {
+                        tasks.push(task);
+                    });
+
+                    // Re-render the task list and calendar
+                    renderTasks();
+                    if (calendarInitialized) {
+                        calendar.removeAllEvents();
+                        tasks.forEach(task => {
+                            const event = {
+                                title: `${task.startTime} - ${task.title}`,
+                                start: new Date(task.date + "T" + task.startTime),
+                                allDay: false,
+                                classNames: [task.category]
+                            };
+                            calendar.addEvent(event);
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error parsing JSON:", error);
+                }
+            };
+
+            reader.onerror = function (event) {
+                console.error("Error occurred while reading the file:", event.target.error);
+            };
+
+            reader.readAsText(file);
         }
 
+        // Event listener for the load file input
+        document.getElementById("loadFileInput").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            loadTasksFromFile(file);
+        });
 
-
-
+        // Event listener for the save button
+        document.getElementById("saveButton").addEventListener("click", saveTasks);
 
     </script>
 </body>
