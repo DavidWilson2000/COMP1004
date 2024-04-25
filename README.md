@@ -1,0 +1,3 @@
+Activity Manager SPA
+
+This project aims to develop a user-friendly SPA that allows users to plan different types of activities onto a simple and digestible format. This will allow users that might struggle more with planning such as some with autism or those with social anxiety (Dubbelink.L & Geurts. H, 2017). Looking at similar already existing applications such as Google Calendar, I noticed a trend of needing to sign in to use the application so I aim to make something that can be stored more locally so that if you are unable to access the internet you will still be able to view your calendar. 
